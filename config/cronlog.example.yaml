@@ -1,0 +1,25 @@
+# cronlog example configuration
+# Copy this file to /etc/cronlog/cronlog.yaml and adjust as needed.
+
+# Directory where log files are stored.
+# Default: /var/log/cronlog
+log_dir: /var/log/cronlog
+
+# Maximum number of rotated log files to keep per job.
+# Older files beyond this count are pruned automatically.
+# Default: 7
+max_files: 7
+
+# Maximum size of a single log file in megabytes before rotation.
+# Default: 50
+max_size_mb: 50
+
+# Maximum wall-clock time allowed for the job to run.
+# Accepts Go duration strings: 30m, 1h, 90s, etc.
+# Default: 30m
+timeout: 30m
+
+# Human-readable name for the job, used in log file names and structured
+# log entries. If empty, cronlog derives a name from the command.
+# Example: "db-backup", "cache-warm"
+job_name: my-cron-job
