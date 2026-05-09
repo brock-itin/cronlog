@@ -13,7 +13,7 @@ import (
 
 // Runner wraps a runner.Runner with a configurable timeout.
 type Runner struct {
-	inner   *runner.Runner
+	inner    *runner.Runner
 	duration time.Duration
 }
 
@@ -21,6 +21,12 @@ type Runner struct {
 // If d is zero or negative, no timeout is applied.
 func New(r *runner.Runner, d time.Duration) *Runner {
 	return &Runner{inner: r, duration: d}
+}
+
+// Duration returns the configured timeout duration.
+// A value of zero or negative means no timeout is applied.
+func (t *Runner) Duration() time.Duration {
+	return t.duration
 }
 
 // Run executes the command, killing it if the timeout elapses.
