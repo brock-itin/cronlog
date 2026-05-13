@@ -81,3 +81,21 @@ func TestDone_IncludesDurationAndExitCode(t *testing.T) {
 		t.Errorf("expected message 'job finished', got %q", entry.Message)
 	}
 }
+
+func TestNew_SetsJobName(t *testing.T) {
+	var buf bytes.Buffer
+	l := logger.New(&buf, "myjob")
+
+	if err := l.Info("test"); err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	var entry logger.Entry
+	if err := json.Unmarshal(buf.Bytes(), &entry); err != nil {
+		t.Fatalf("failed to parse JSON output: %v", err)
+	}
+
+	if entry.Job != "myjob" {
+		t.Errorf("expected job name 'myjob', got %q", entry.Job)
+	}
+}
