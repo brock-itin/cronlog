@@ -40,6 +40,18 @@ func TestSuppress_InvalidRegexSkipped(t *testing.T) {
 	}
 }
 
+func TestSuppress_ExactMatchIsCaseSensitive(t *testing.T) {
+	// Exact string matching should be case-sensitive.
+	f := filter.New(nil, []string{"nothing to do"})
+
+	if f.Suppress("Nothing to do") {
+		t.Error("expected case-sensitive exact match to not suppress differently-cased line")
+	}
+	if f.Suppress("NOTHING TO DO") {
+		t.Error("expected case-sensitive exact match to not suppress uppercased line")
+	}
+}
+
 func TestApply_FiltersLines(t *testing.T) {
 	f := filter.New([]string{`^DEBUG:`}, []string{"nothing to do"})
 
