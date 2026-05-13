@@ -35,6 +35,7 @@ cronlog \
 ```json
 {"time":"2024-01-15T02:00:01Z","job":"backup","level":"info","msg":"job started","pid":12345}
 {"time":"2024-01-15T02:00:03Z","job":"backup","level":"info","msg":"job finished","exit_code":0,"duration":"2.1s"}
+{"time":"2024-01-15T02:00:03Z","job":"backup","level":"error","msg":"job failed","exit_code":1,"duration":"2.1s"}
 ```
 
 **Flags:**
@@ -45,6 +46,12 @@ cronlog \
 | `--log` | required | Path to log file |
 | `--max-size` | `100MB` | Max log file size before rotation |
 | `--max-files` | `7` | Number of rotated files to retain |
+| `--timeout` | none | Kill the job after this duration (e.g. `30m`, `1h`) |
+| `--quiet` | `false` | Suppress stdout/stderr passthrough to terminal |
+
+## Exit Codes
+
+`cronlog` forwards the wrapped command's exit code. If `cronlog` itself fails to start the command, it exits with code `2`.
 
 ## License
 
