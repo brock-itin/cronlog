@@ -9,6 +9,17 @@ import (
 	"github.com/yourorg/cronlog/internal/logger"
 )
 
+// parseEntry is a helper that unmarshals JSON from buf into a logger.Entry,
+// failing the test immediately if parsing fails.
+func parseEntry(t *testing.T, buf *bytes.Buffer) logger.Entry {
+	t.Helper()
+	var entry logger.Entry
+	if err := json.Unmarshal(buf.Bytes(), &entry); err != nil {
+		t.Fatalf("failed to parse JSON output: %v", err)
+	}
+	return entry
+}
+
 func TestInfo_WritesJSONEntry(t *testing.T) {
 	var buf bytes.Buffer
 	l := logger.New(&buf, "backup")
@@ -17,10 +28,7 @@ func TestInfo_WritesJSONEntry(t *testing.T) {
 		t.Fatalf("unexpected error: %v", err)
 	}
 
-	var entry logger.Entry
-	if err := json.Unmarshal(buf.Bytes(), &entry); err != nil {
-		t.Fatalf("failed to parse JSON output: %v", err)
-	}
+	entry := parseEntry(t, &buf)
 
 	if entry.Level != logger.LevelInfo {
 		t.Errorf("expected level INFO, got %q", entry.Level)
@@ -45,10 +53,7 @@ func TestError_IncludesExitCode(t *testing.T) {
 		t.Fatalf("unexpected error: %v", err)
 	}
 
-	var entry logger.Entry
-	if err := json.Unmarshal(buf.Bytes(), &entry); err != nil {
-		t.Fatalf("failed to parse JSON output: %v", err)
-	}
+	entry := parseEntry(t, &buf)
 
 	if entry.Level != logger.LevelError {
 		t.Errorf("expected level ERROR, got %q", entry.Level)
@@ -66,10 +71,7 @@ func TestDone_IncludesDurationAndExitCode(t *testing.T) {
 		t.Fatalf("unexpected error: %v", err)
 	}
 
-	var entry logger.Entry
-	if err := json.Unmarshal(buf.Bytes(), &entry); err != nil {
-		t.Fatalf("failed to parse JSON output: %v", err)
-	}
+	entry := parseEntry(t, &buf)
 
 	if entry.ExitCode == nil || *entry.ExitCode != 0 {
 		t.Errorf("expected exit_code 0, got %v", entry.ExitCode)
@@ -90,10 +92,7 @@ func TestNew_SetsJobName(t *testing.T) {
 		t.Fatalf("unexpected error: %v", err)
 	}
 
-	var entry logger.Entry
-	if err := json.Unmarshal(buf.Bytes(), &entry); err != nil {
-		t.Fatalf("failed to parse JSON output: %v", err)
-	}
+	entry := parseEntry(t, &buf)
 
 	if entry.Job != "myjob" {
 		t.Errorf("expected job name 'myjob', got %q", entry.Job)
