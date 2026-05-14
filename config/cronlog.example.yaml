@@ -1,25 +1,37 @@
 # cronlog example configuration
-# Copy this file to /etc/cronlog/cronlog.yaml and adjust as needed.
+# Copy to /etc/cronlog/cronlog.yaml or pass via --config.
 
-# Directory where log files are stored.
-# Default: /var/log/cronlog
-log_dir: /var/log/cronlog
+job_name: "my-job"
 
-# Maximum number of rotated log files to keep per job.
-# Older files beyond this count are pruned automatically.
-# Default: 7
+log_dir: "/var/log/cronlog"
 max_files: 7
 
-# Maximum size of a single log file in megabytes before rotation.
-# Default: 50
-max_size_mb: 50
+# Structured JSON log level (info | error)
+log_level: "info"
 
-# Maximum wall-clock time allowed for the job to run.
-# Accepts Go duration strings: 30m, 1h, 90s, etc.
-# Default: 30m
-timeout: 30m
+# Webhook URL for failure notifications (leave blank to disable)
+notify_url: ""
 
-# Human-readable name for the job, used in log file names and structured
-# log entries. If empty, cronlog derives a name from the command.
-# Example: "db-backup", "cache-warm"
-job_name: my-cron-job
+# Heartbeat URL pinged on completion (leave blank to disable)
+heartbeat_url: ""
+
+# Watchdog: alert when job has not succeeded within this duration.
+# Uses Go duration syntax: 25h, 90m, etc. Set to 0 to disable.
+watchdog_interval: "25h"
+
+# Retry failed jobs up to this many additional attempts.
+retry_max_attempts: 0
+retry_delay: "5s"
+
+# Throttle: minimum gap between successive runs.
+throttle_interval: "0s"
+
+# Output truncation limit in bytes (0 = unlimited).
+truncate_bytes: 0
+
+# Suppress lines matching these patterns (literal or regex).
+filter_patterns: []
+
+# Redact sensitive values from output.
+redact_literals: []
+redact_patterns: []
