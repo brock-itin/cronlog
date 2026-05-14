@@ -6,6 +6,8 @@ import (
 	"testing"
 )
 
+// findKey searches for a key in a slice of "KEY=VALUE" environment strings.
+// It returns the value and true if found, or an empty string and false otherwise.
 func findKey(env []string, key string) (string, bool) {
 	prefix := key + "="
 	for _, e := range env {
@@ -89,5 +91,22 @@ func TestResolve_MaskedAndExtraInteraction(t *testing.T) {
 	}
 	if v != "" {
 		t.Fatalf("masking should win over injection, got %q", v)
+	}
+}
+
+func TestResolve_NoDuplicateKeys(t *testing.T) {
+	t.Setenv("CRONLOG_TEST_VAR", "hello")
+
+	r := New(map[string]string{"CRONLOG_TEST_VAR": "overridden"}, nil)
+	env := r.Resolve()
+
+	count := 0
+	for _, e := range env {
+		if strings.HasPrefix(e, "CRONLOG_TEST_VAR=") {
+			count++
+		}
+	}
+	if count != 1 {
+		t.Fatalf("expected exactly 1 occurrence of CRONLOG_TEST_VAR, got %d", count)
 	}
 }
