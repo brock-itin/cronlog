@@ -92,3 +92,22 @@ func TestLoad_CorruptFile_ReturnsError(t *testing.T) {
 		t.Error("expected error for corrupt checkpoint file")
 	}
 }
+
+func TestSave_OverwritesPreviousEntry(t *testing.T) {
+	cp := checkpoint.New(tempPath(t))
+	first := time.Now().UTC().Add(-time.Hour).Truncate(time.Second)
+	_ = cp.Save(checkpoint.Entry{Job: "backup", LastOK: first})
+
+	second := time.Now().UTC().Truncate(time.Second)
+	if err := cp.Save(checkpoint.Entry{Job: "backup", LastOK: second}); err != nil {
+		t.Fatalf("Save: %v", err)
+	}
+
+	e, err := cp.Load()
+	if err != nil {
+		t.Fatalf("Load: %v", err)
+	}
+	if !e.LastOK.Equal(second) {
+		t.Errorf("LastOK: want %v, got %v", second, e.LastOK)
+	}
+}
