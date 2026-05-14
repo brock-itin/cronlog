@@ -5,6 +5,15 @@
 // pattern will be suppressed before being forwarded to the structured logger
 // or the log rotator.
 //
+// Matching rules:
+//
+//   - Exact strings are compared using simple string equality after trimming
+//     any trailing newline or carriage-return characters.
+//   - Regular expression patterns are matched against the full line using
+//     [regexp.MatchString]; a match anywhere in the line is sufficient.
+//   - Patterns that fail to compile are silently ignored so that a single
+//     malformed entry does not disable all filtering.
+//
 // Usage:
 //
 //	f := filter.New(
@@ -17,7 +26,4 @@
 //			logger.Info(line)
 //		}
 //	}
-//
-// Patterns that fail to compile are silently ignored so that a single
-// malformed entry does not disable all filtering.
 package filter
